@@ -1,4 +1,4 @@
-
+import {NavigatorScreenParams} from '@react-navigation/native';
 
 //Uitgave
 export interface Expense {
@@ -21,4 +21,25 @@ export interface Category {
     isCustom: boolean; // aangeven of categorie standaard is of door de gebruiker is toegevoegd
 }
 
+//navigatie
+export type AuthStackParamList = {
+  Login: undefined
+  Register: undefined
+}
 
+export type ExpensesStackParamList {
+    ExpensesList: undefined;
+    ExpenseDetail: { expenseId: string };
+}
+
+export type ProfileStackParamList = {
+  ProfileMain: undefined
+  Categories: undefined
+}
+
+export type MainTabParamList = {
+  Dashboard: undefined
+  Expenses: NavigatorScreenParams<ExpensesStackParamList>
+  AddExpense: undefined
+  Profile: NavigatorScreenParams<ProfileStackParamList>
+}
