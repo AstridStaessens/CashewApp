@@ -7,38 +7,7 @@ import AppText from '../components/AppText'
 
 type Nav = NativeStackNavigationProp<ExpensesStackParamList, 'ExpensesList'>
 
-const MOCK_EXPENSES: Expense[] = [
-  {
-    id: '1',
-    amount: 12.5,
-    category: 'eten',
-    description: 'Lunch Panos',
-    date: new Date('2026-06-01'),
-    location: 'Gent, België',
-    receiptPhotoUri: '',
-    createdAt: new Date('2026-06-01'),
-  },
-  {
-    id: '2',
-    amount: 45.0,
-    category: 'transport',
-    description: '',
-    date: new Date('2026-06-02'),
-    location: '',
-    receiptPhotoUri: '',
-    createdAt: new Date('2026-06-02'),
-  },
-  {
-    id: '3',
-    amount: 9.99,
-    category: 'entertainment',
-    description: 'Netflix',
-    date: new Date('2026-06-02'),
-    location: '',
-    receiptPhotoUri: '',
-    createdAt: new Date('2026-06-02'),
-  },
-]
+const expenses: Expense[] = []
 
 export default function ExpensesScreen() {
   const navigation = useNavigation<Nav>()
@@ -47,7 +16,7 @@ export default function ExpensesScreen() {
     <FlatList
       style={styles.container}
       contentContainerStyle={styles.content}
-      data={MOCK_EXPENSES}
+      data={expenses}
       keyExtractor={(item) => item.id}
       ListHeaderComponent={
         <AppText variant="title" style={styles.title}>Alle uitgaven</AppText>
