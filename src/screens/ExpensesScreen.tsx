@@ -1,4 +1,4 @@
-import { FlatList, View, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ExpensesStackParamList, Expense } from '../types'
