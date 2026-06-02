@@ -21,7 +21,7 @@ export interface Category {
     isCustom: boolean; // aangeven of categorie standaard is of door de gebruiker is toegevoegd
 }
 
-//navigatie
+//Navigatie
 export type AuthStackParamList = {
   Login: undefined
   Register: undefined
