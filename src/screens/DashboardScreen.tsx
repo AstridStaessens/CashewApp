@@ -8,9 +8,9 @@ import BudgetBar from '../components/BudgetBar'
 const MOCK_EXPENSES: Expense[] = [
   {
     id: '1',
-    amount: 12.5,
-    category: 'eten',
-    description: 'Lunch Panos',
+    amount: 850.0,
+    category: 'wonen',
+    description: 'Huur juni',
     date: new Date('2026-06-01'),
     location: 'Gent, België',
     receiptPhotoUri: '',
@@ -18,16 +18,26 @@ const MOCK_EXPENSES: Expense[] = [
   },
   {
     id: '2',
+    amount: 67.5,
+    category: 'boodschappen',
+    description: 'Lidl',
+    date: new Date('2026-06-02'),
+    location: 'Gent, België',
+    receiptPhotoUri: '',
+    createdAt: new Date('2026-06-02'),
+  },
+  {
+    id: '3',
     amount: 45.0,
     category: 'transport',
-    description: '',
+    description: 'Treinabonnement',
     date: new Date('2026-06-02'),
     location: '',
     receiptPhotoUri: '',
     createdAt: new Date('2026-06-02'),
   },
   {
-    id: '3',
+    id: '4',
     amount: 9.99,
     category: 'entertainment',
     description: 'Netflix',
@@ -36,15 +46,25 @@ const MOCK_EXPENSES: Expense[] = [
     receiptPhotoUri: '',
     createdAt: new Date('2026-06-02'),
   },
+  {
+    id: '5',
+    amount: 120.0,
+    category: 'vaste_kosten',
+    description: 'Elektriciteit',
+    date: new Date('2026-06-03'),
+    location: '',
+    receiptPhotoUri: '',
+    createdAt: new Date('2026-06-03'),
+  },
 ]
 
 const MOCK_LIMITS: Record<string, number> = {
-  eten: 200,
-  transport: 100,
+  wonen: 1000,
+  boodschappen: 300,
+  gezondheid: 100,
+  transport: 150,
   entertainment: 80,
-  gezondheid: 60,
-  wonen: 500,
-  overig: 50,
+  vaste_kosten: 200,
 }
 
 export default function DashboardScreen() {
