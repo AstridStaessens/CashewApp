@@ -27,7 +27,7 @@ export type AuthStackParamList = {
   Register: undefined
 }
 
-export type ExpensesStackParamList {
+export type ExpensesStackParamList = {
     ExpensesList: undefined;
     ExpenseDetail: { expenseId: string };
 }
