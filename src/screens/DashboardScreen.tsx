@@ -1,4 +1,5 @@
 import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useCallback } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore'
@@ -62,29 +63,31 @@ export default function DashboardScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <AppText variant="title">Dashboard</AppText>
-      <AppText variant="caption">Deze maand</AppText>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <AppText variant="title">Dashboard</AppText>
+        <AppText variant="caption">Deze maand</AppText>
 
-      <View style={styles.totalCard}>
-        <AppText variant="caption" style={styles.totalLabel}>Totaal uitgegeven</AppText>
-        <AppText variant="title" style={styles.totalAmount}>
-          {formatCurrency(totalThisMonth, 'EUR')}
-        </AppText>
-      </View>
+        <View style={styles.totalCard}>
+          <AppText variant="caption" style={styles.totalLabel}>Totaal uitgegeven</AppText>
+          <AppText variant="title" style={styles.totalAmount}>
+            {formatCurrency(totalThisMonth, 'EUR')}
+          </AppText>
+        </View>
 
-      <AppText variant="label" style={styles.sectionTitle}>Budget per categorie</AppText>
-      {DEFAULT_CATEGORIES.map((cat) => (
-        <BudgetBar
-          key={cat.id}
-          categoryName={cat.name}
-          categoryIcon={cat.icon}
-          spent={spentByCategory[cat.id] ?? 0}
-          limit={LIMITS[cat.id] ?? 0}
-          currency="EUR"
-        />
-      ))}
-    </ScrollView>
+        <AppText variant="label" style={styles.sectionTitle}>Budget per categorie</AppText>
+        {DEFAULT_CATEGORIES.map((cat) => (
+          <BudgetBar
+            key={cat.id}
+            categoryName={cat.name}
+            categoryIcon={cat.icon}
+            spent={spentByCategory[cat.id] ?? 0}
+            limit={LIMITS[cat.id] ?? 0}
+            currency="EUR"
+          />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 

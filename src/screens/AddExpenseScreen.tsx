@@ -1,4 +1,5 @@
 import { View, StyleSheet, ScrollView, TextInput, Image, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import * as ImagePicker from 'expo-image-picker'
@@ -95,90 +96,89 @@ export default function AddExpenseScreen() {
     setLocationLoading(true)
     try {
       const { status } = await Location.requestForegroundPermissionsAsync()
-      if (status !== 'granted') {
-        Alert.alert('We hebben toegang tot je locatie nodig.')
-        return
-      }
+      if (status !== 'granted') return
       const coords = await Location.getCurrentPositionAsync({})
       const [place] = await Location.reverseGeocodeAsync(coords.coords)
       if (place) {
         setLocation(place.city ?? place.region ?? '')
       }
     } catch {
-      Alert.alert('Locatie ophalen mislukt.')
+      // locatie niet beschikbaar
     } finally {
       setLocationLoading(false)
     }
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <AppText variant="title" style={styles.title}>Uitgave toevoegen</AppText>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView contentContainerStyle={styles.content}>
+          <AppText variant="title" style={styles.title}>Uitgave toevoegen</AppText>
 
-      <AppText variant="label">Bedrag (€)</AppText>
-      <TextInput
-        style={styles.input}
-        placeholder="0.00"
-        keyboardType="decimal-pad"
-        value={formik.values.amount}
-        onChangeText={formik.handleChange('amount')}
-        onBlur={formik.handleBlur('amount')}
-      />
-      {formik.touched.amount && formik.errors.amount && (
-        <AppText variant="caption" style={styles.error}>{formik.errors.amount}</AppText>
-      )}
+          <AppText variant="label">Bedrag (€)</AppText>
+          <TextInput
+            style={styles.input}
+            placeholder="0.00"
+            keyboardType="decimal-pad"
+            value={formik.values.amount}
+            onChangeText={formik.handleChange('amount')}
+            onBlur={formik.handleBlur('amount')}
+          />
+          {formik.touched.amount && formik.errors.amount && (
+            <AppText variant="caption" style={styles.error}>{formik.errors.amount}</AppText>
+          )}
 
-      <AppText variant="label" style={styles.label}>Categorie</AppText>
-      <View style={styles.categories}>
-        {DEFAULT_CATEGORIES.map((cat) => (
-          <TouchableOpacity
-            key={cat.id}
-            onPress={() => formik.setFieldValue('category', cat.id)}
-            style={[styles.categoryItem, formik.values.category === cat.id && { borderColor: cat.color, borderWidth: 2, borderRadius: 10 }]}
-          >
-            <CategoryBadge category={cat} size="large" />
-          </TouchableOpacity>
-        ))}
-      </View>
-      {formik.touched.category && formik.errors.category && (
-        <AppText variant="caption" style={styles.error}>{formik.errors.category}</AppText>
-      )}
+          <AppText variant="label" style={styles.label}>Categorie</AppText>
+          <View style={styles.categories}>
+            {DEFAULT_CATEGORIES.map((cat) => (
+              <TouchableOpacity
+                key={cat.id}
+                onPress={() => formik.setFieldValue('category', cat.id)}
+                style={[styles.categoryItem, formik.values.category === cat.id && { borderColor: cat.color, borderWidth: 2, borderRadius: 10 }]}
+              >
+                <CategoryBadge category={cat} size="large" />
+              </TouchableOpacity>
+            ))}
+          </View>
+          {formik.touched.category && formik.errors.category && (
+            <AppText variant="caption" style={styles.error}>{formik.errors.category}</AppText>
+          )}
 
-      <AppText variant="label" style={styles.label}>Omschrijving (optioneel)</AppText>
-      <TextInput
-        style={styles.input}
-        placeholder="Bv. Lunch Panos"
-        value={formik.values.description}
-        onChangeText={formik.handleChange('description')}
-        onBlur={formik.handleBlur('description')}
-      />
+          <AppText variant="label" style={styles.label}>Omschrijving (optioneel)</AppText>
+          <TextInput
+            style={styles.input}
+            placeholder="Bv. Lunch Panos"
+            value={formik.values.description}
+            onChangeText={formik.handleChange('description')}
+            onBlur={formik.handleBlur('description')}
+          />
 
-      <AppText variant="label" style={styles.label}>Locatie</AppText>
-      <View style={styles.row}>
-        <TextInput
-          style={[styles.input, styles.locationInput]}
-          placeholder="Locatie"
-          value={location}
-          onChangeText={setLocation}
-        />
-        <AppButton
-          title={locationLoading ? '...' : '📍'}
-          onPress={getLocation}
-          disabled={locationLoading}
-        />
-      </View>
+          <AppText variant="label" style={styles.label}>Locatie</AppText>
+          <View style={styles.row}>
+            <TextInput
+              style={[styles.input, styles.locationInput]}
+              placeholder="Locatie"
+              value={location}
+              onChangeText={setLocation}
+            />
+            <AppButton
+              title={locationLoading ? '...' : '📍'}
+              onPress={getLocation}
+              disabled={locationLoading}
+            />
+          </View>
 
-      <AppText variant="label" style={styles.label}>Bonnetje (optioneel)</AppText>
-      <View style={styles.row}>
-        <AppButton title="📷 Camera" onPress={takePhoto} variant="secondary" />
-        <AppButton title="🖼 Galerij" onPress={pickPhoto} variant="secondary" />
-      </View>
-      {photoUri ? <Image source={{ uri: photoUri }} style={styles.photo} /> : null}
+          <AppText variant="label" style={styles.label}>Bonnetje (optioneel)</AppText>
+          <View style={styles.row}>
+            <AppButton title="📷 Camera" onPress={takePhoto} variant="secondary" />
+            <AppButton title="🖼 Galerij" onPress={pickPhoto} variant="secondary" />
+          </View>
+          {photoUri ? <Image source={{ uri: photoUri }} style={styles.photo} /> : null}
 
-      <AppButton title="Opslaan" onPress={() => formik.handleSubmit()} loading={formik.isSubmitting} />
-    </ScrollView>
-    </KeyboardAvoidingView>
+          <AppButton title="Opslaan" onPress={() => formik.handleSubmit()} loading={formik.isSubmitting} />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }
 

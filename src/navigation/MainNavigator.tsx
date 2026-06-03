@@ -14,9 +14,9 @@ const ExpenseStack = createNativeStackNavigator<ExpensesStackParamList>()
 
 function ExpensesStackNavigator() {
     return (
-        <ExpenseStack.Navigator>
-            <ExpenseStack.Screen name="ExpensesList" component={ExpensesScreen} options={{title: 'Uitgaven'}} />
-            <ExpenseStack.Screen name="ExpenseDetail" component={ExpenseDetailScreen} options={{title: 'Detail'}} />
+        <ExpenseStack.Navigator screenOptions={{ headerShown: false }}>
+            <ExpenseStack.Screen name="ExpensesList" component={ExpensesScreen} />
+            <ExpenseStack.Screen name="ExpenseDetail" component={ExpenseDetailScreen} />
         </ExpenseStack.Navigator>
     )
 }
@@ -26,7 +26,7 @@ const ProfileStack = createNativeStackNavigator<ProfileStackParamList>()
 function ProfileStackNavigator() {
     return (
         <ProfileStack.Navigator>
-            <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{title: 'Profiel'}} />
+            <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
             <ProfileStack.Screen name="Categories" component={CategoryScreen} options={{title: 'Categorieën'}} />
         </ProfileStack.Navigator>
     )
@@ -36,7 +36,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 
 export default function MainNavigator() {
     return (
-        <Tab.Navigator screenOptions={{ tabBarActiveTintColor: '#6c63ff' }}>
+        <Tab.Navigator screenOptions={{ tabBarActiveTintColor: '#6c63ff', headerShown: false }}>
             <Tab.Screen
                 name="Dashboard"
                 component={DashboardScreen}

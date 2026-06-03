@@ -1,4 +1,5 @@
 import { FlatList, StyleSheet, ActivityIndicator, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useCallback } from 'react'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
@@ -41,25 +42,26 @@ export default function ExpensesScreen() {
   }
 
   return (
-    <FlatList
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      data={expenses}
-      keyExtractor={(item) => item.id}
-      ListHeaderComponent={
-        <AppText variant="title" style={styles.title}>Alle uitgaven</AppText>
-      }
-      ListEmptyComponent={
-        <AppText variant="caption" style={styles.empty}>Nog geen uitgaven.</AppText>
-      }
-      renderItem={({ item }) => (
-        <ExpenseCard
-          expense={item}
-          currency="EUR"
-          onPress={() => navigation.navigate('ExpenseDetail', { expenseId: item.id })}
-        />
-      )}
-    />
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        contentContainerStyle={styles.content}
+        data={expenses}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={
+          <AppText variant="title" style={styles.title}>Alle uitgaven</AppText>
+        }
+        ListEmptyComponent={
+          <AppText variant="caption" style={styles.empty}>Nog geen uitgaven.</AppText>
+        }
+        renderItem={({ item }) => (
+          <ExpenseCard
+            expense={item}
+            currency="EUR"
+            onPress={() => navigation.navigate('ExpenseDetail', { expenseId: item.id })}
+          />
+        )}
+      />
+    </SafeAreaView>
   )
 }
 
