@@ -26,6 +26,10 @@ export default function AddExpenseScreen() {
   const [location, setLocation] = useState<string>('')
   const [locationLoading, setLocationLoading] = useState(false)
 
+  useEffect(() => {
+    getLocation()
+  }, [])
+
   const formik = useFormik({
     initialValues: { amount: '', category: '', description: '' },
     validationSchema: schema,
@@ -63,7 +67,7 @@ export default function AddExpenseScreen() {
       return
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: false,
       quality: 0.7,
     })
