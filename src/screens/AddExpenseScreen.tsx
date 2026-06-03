@@ -1,10 +1,10 @@
-import { View, StyleSheet, ScrollView, TextInput, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, StyleSheet, ScrollView, TextInput, Image, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
 import { addDoc, collection, Timestamp } from 'firebase/firestore'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { auth, db } from '../../firebase'
 import AppText from '../components/AppText'
 import AppButton from '../components/AppButton'
@@ -98,7 +98,7 @@ export default function AddExpenseScreen() {
       const coords = await Location.getCurrentPositionAsync({})
       const [place] = await Location.reverseGeocodeAsync(coords.coords)
       if (place) {
-        setLocation(`${place.city ?? ''}, ${place.country ?? ''}`.trim().replace(/^,\s*/, ''))
+        setLocation(place.city ?? place.region ?? '')
       }
     } catch {
       Alert.alert('Locatie ophalen mislukt.')
@@ -108,6 +108,7 @@ export default function AddExpenseScreen() {
   }
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <AppText variant="title" style={styles.title}>Uitgave toevoegen</AppText>
 
@@ -173,6 +174,7 @@ export default function AddExpenseScreen() {
 
       <AppButton title="Opslaan" onPress={() => formik.handleSubmit()} loading={formik.isSubmitting} />
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 

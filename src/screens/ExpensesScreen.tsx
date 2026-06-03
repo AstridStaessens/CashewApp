@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet, ActivityIndicator, View } from 'react-native'
-import { useEffect, useState } from 'react'
+import { useState, useCallback } from 'react'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ExpensesStackParamList, Expense } from '../types'
 import { auth, db } from '../../firebase'
@@ -15,23 +15,26 @@ export default function ExpensesScreen() {
   const [loading, setLoading] = useState(true)
   const navigation = useNavigation<Nav>()
 
-  useEffect(() => {
-    const uid = auth.currentUser?.uid
-    if (!uid) return
+  useFocusEffect(
+    useCallback(() => {
+      const uid = auth.currentUser?.uid
+      if (!uid) return
 
-    const q = query(collection(db, 'users', uid, 'expenses'), orderBy('date', 'desc'))
+      setLoading(true)
+      const q = query(collection(db, 'users', uid, 'expenses'), orderBy('date', 'desc'))
 
-    getDocs(q).then((snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        date: doc.data().date.toDate(),
-        createdAt: doc.data().createdAt.toDate(),
-      })) as Expense[]
-      setExpenses(data)
-      setLoading(false)
-    })
-  }, [])
+      getDocs(q).then((snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          date: doc.data().date.toDate(),
+          createdAt: doc.data().createdAt.toDate(),
+        })) as Expense[]
+        setExpenses(data)
+        setLoading(false)
+      })
+    }, [])
+  )
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" /></View>

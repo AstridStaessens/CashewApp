@@ -2,7 +2,9 @@ import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { signOut } from 'firebase/auth'
 import { ProfileStackParamList } from '../types'
+import { auth } from '../../firebase'
 import { DEFAULT_CATEGORIES } from '../utils/categories'
 import AppText from '../components/AppText'
 import AppButton from '../components/AppButton'
@@ -34,7 +36,7 @@ export default function ProfileScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <AppText variant="title">Profiel</AppText>
-      <AppText variant="caption" style={styles.sub}>gebruiker@email.com</AppText>
+      <AppText variant="caption" style={styles.sub}>{auth.currentUser?.email}</AppText>
 
       <AppText variant="label" style={styles.section}>Valuta</AppText>
       <View style={styles.row}>
@@ -70,13 +72,17 @@ export default function ProfileScreen() {
         onPress={() => navigation.navigate('Categories')}
         variant="secondary"
       />
+      <AppButton
+        title="Uitloggen"
+        onPress={() => signOut(auth)}
+      />
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8f9fa' },
-  content: { padding: 20 },
+  content: { padding: 20, paddingBottom: 60 },
   sub: { marginBottom: 16 },
   section: { marginTop: 24, marginBottom: 12 },
   row: { flexDirection: 'row', gap: 8 },

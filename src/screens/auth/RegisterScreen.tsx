@@ -2,6 +2,7 @@ import { StyleSheet, KeyboardAvoidingView, Platform, TextInput, ScrollView } fro
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import * as Location from 'expo-location'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth } from '../../../firebase'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -33,6 +34,7 @@ export default function RegisterScreen({ navigation }: Props) {
         setError('')
         const { user } = await createUserWithEmailAndPassword(auth, values.email, values.password)
         await updateProfile(user, { displayName: values.name })
+        await Location.requestForegroundPermissionsAsync()
       } catch {
         setError('Registratie mislukt. Probeer een ander e-mailadres.')
       } finally {

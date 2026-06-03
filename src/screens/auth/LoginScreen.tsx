@@ -2,6 +2,7 @@ import { StyleSheet, KeyboardAvoidingView, Platform, TextInput } from 'react-nat
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import * as Location from 'expo-location'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../../firebase'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -28,6 +29,7 @@ export default function LoginScreen({ navigation }: Props) {
       try {
         setError('')
         await signInWithEmailAndPassword(auth, values.email, values.password)
+        await Location.requestForegroundPermissionsAsync()
       } catch {
         setError('Fout e-mail of wachtwoord')
       } finally {

@@ -1,5 +1,6 @@
 import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
-import { useEffect, useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore'
 import { Expense } from '../types'
 import { auth, db } from '../../firebase'
@@ -22,27 +23,30 @@ export default function DashboardScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const uid = auth.currentUser?.uid
-    if (!uid) return
+  useFocusEffect(
+    useCallback(() => {
+      const uid = auth.currentUser?.uid
+      if (!uid) return
 
-    const q = query(
-      collection(db, 'users', uid, 'expenses'),
-      where('date', '>=', Timestamp.fromDate(getStartOfMonth())),
-      where('date', '<', Timestamp.fromDate(getEndOfMonth()))
-    )
+      setLoading(true)
+      const q = query(
+        collection(db, 'users', uid, 'expenses'),
+        where('date', '>=', Timestamp.fromDate(getStartOfMonth())),
+        where('date', '<', Timestamp.fromDate(getEndOfMonth()))
+      )
 
-    getDocs(q).then((snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        date: doc.data().date.toDate(),
-        createdAt: doc.data().createdAt.toDate(),
-      })) as Expense[]
-      setExpenses(data)
-      setLoading(false)
-    })
-  }, [])
+      getDocs(q).then((snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          date: doc.data().date.toDate(),
+          createdAt: doc.data().createdAt.toDate(),
+        })) as Expense[]
+        setExpenses(data)
+        setLoading(false)
+      })
+    }, [])
+  )
 
   const totalThisMonth = expenses.reduce((sum, e) => sum + e.amount, 0)
 
