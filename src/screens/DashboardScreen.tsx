@@ -2,27 +2,22 @@ import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useCallback } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
+import { useSelector } from 'react-redux'
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore'
 import { Expense } from '../types'
 import { auth, db } from '../../firebase'
+import { RootState } from '../store'
 import { DEFAULT_CATEGORIES } from '../utils/categories'
 import { formatCurrency } from '../utils/formatCurrency'
 import { getStartOfMonth, getEndOfMonth } from '../utils/formatDate'
 import AppText from '../components/AppText'
 import BudgetBar from '../components/BudgetBar'
 
-const LIMITS: Record<string, number> = {
-  wonen: 1000,
-  boodschappen: 300,
-  gezondheid: 100,
-  transport: 150,
-  entertainment: 80,
-  vaste_kosten: 200,
-}
-
 export default function DashboardScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
+  const limits = useSelector((state: RootState) => state.budget.limits)
+  const currency = useSelector((state: RootState) => state.settings.currency)
 
   useFocusEffect(
     useCallback(() => {
@@ -71,7 +66,7 @@ export default function DashboardScreen() {
         <View style={styles.totalCard}>
           <AppText variant="caption" style={styles.totalLabel}>Totaal uitgegeven</AppText>
           <AppText variant="title" style={styles.totalAmount}>
-            {formatCurrency(totalThisMonth, 'EUR')}
+            {formatCurrency(totalThisMonth, currency)}
           </AppText>
         </View>
 
@@ -82,8 +77,8 @@ export default function DashboardScreen() {
             categoryName={cat.name}
             categoryIcon={cat.icon}
             spent={spentByCategory[cat.id] ?? 0}
-            limit={LIMITS[cat.id] ?? 0}
-            currency="EUR"
+            limit={limits[cat.id] ?? 0}
+            currency={currency}
           />
         ))}
       </ScrollView>

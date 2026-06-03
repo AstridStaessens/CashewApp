@@ -1,11 +1,14 @@
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useDispatch, useSelector } from 'react-redux'
 import { signOut } from 'firebase/auth'
 import { ProfileStackParamList } from '../types'
 import { auth } from '../../firebase'
+import { RootState, AppDispatch } from '../store'
+import { setLimit } from '../store/budgetSlice'
+import { setCurrency } from '../store/settingsSlice'
 import { DEFAULT_CATEGORIES } from '../utils/categories'
 import AppText from '../components/AppText'
 import AppButton from '../components/AppButton'
@@ -14,24 +17,17 @@ import AvatarButton from '../components/AvatarButton'
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfileMain'>
 
 const CURRENCIES = ['EUR', 'USD', 'GBP'] as const
-type Currency = typeof CURRENCIES[number]
 
 export default function ProfileScreen() {
   const navigation = useNavigation<Nav>()
-  const [currency, setCurrency] = useState<Currency>('EUR')
-  const [limits, setLimits] = useState<Record<string, number>>({
-    wonen: 1000,
-    boodschappen: 300,
-    gezondheid: 100,
-    transport: 150,
-    entertainment: 80,
-    vaste_kosten: 200,
-  })
+  const dispatch = useDispatch<AppDispatch>()
+  const limits = useSelector((state: RootState) => state.budget.limits)
+  const currency = useSelector((state: RootState) => state.settings.currency)
 
   function handleSetLimit(categoryId: string, value: string) {
     const amount = parseFloat(value)
     if (!isNaN(amount) && amount >= 0) {
-      setLimits((prev) => ({ ...prev, [categoryId]: amount }))
+      dispatch(setLimit({ categoryId, amount }))
     }
   }
 
@@ -52,7 +48,7 @@ export default function ProfileScreen() {
             <TouchableOpacity
               key={c}
               style={[styles.currencyBtn, currency === c && styles.currencyActive]}
-              onPress={() => setCurrency(c)}
+              onPress={() => dispatch(setCurrency(c))}
             >
               <AppText variant="caption" style={currency === c ? styles.currencyTextActive : {}}>
                 {c}
