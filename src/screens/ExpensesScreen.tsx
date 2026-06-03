@@ -1,11 +1,13 @@
-import { FlatList, StyleSheet, ActivityIndicator, View } from 'react-native'
+import { FlatList, StyleSheet, ActivityIndicator, View, ListRenderItem } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useCallback } from 'react'
 import { collection, query, orderBy, getDocs } from 'firebase/firestore'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useSelector } from 'react-redux'
 import { ExpensesStackParamList, Expense } from '../types'
 import { auth, db } from '../../firebase'
+import { RootState } from '../store'
 import ExpenseCard from '../components/ExpenseCard'
 import AppText from '../components/AppText'
 
@@ -15,6 +17,7 @@ export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
   const navigation = useNavigation<Nav>()
+  const currency = useSelector((state: RootState) => state.settings.currency)
 
   useFocusEffect(
     useCallback(() => {
@@ -37,6 +40,14 @@ export default function ExpensesScreen() {
     }, [])
   )
 
+  const renderExpense: ListRenderItem<Expense> = ({ item }) => (
+    <ExpenseCard
+      expense={item}
+      currency={currency}
+      onPress={() => navigation.navigate('ExpenseDetail', { expenseId: item.id })}
+    />
+  )
+
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" /></View>
   }
@@ -53,13 +64,7 @@ export default function ExpensesScreen() {
         ListEmptyComponent={
           <AppText variant="caption" style={styles.empty}>Nog geen uitgaven.</AppText>
         }
-        renderItem={({ item }) => (
-          <ExpenseCard
-            expense={item}
-            currency="EUR"
-            onPress={() => navigation.navigate('ExpenseDetail', { expenseId: item.id })}
-          />
-        )}
+        renderItem={renderExpense}
       />
     </SafeAreaView>
   )

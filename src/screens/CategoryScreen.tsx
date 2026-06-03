@@ -1,4 +1,4 @@
-import { View, StyleSheet, FlatList, TextInput, Alert, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, FlatList, TextInput, Alert, ActivityIndicator, ListRenderItem } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useEffect } from 'react'
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore'
@@ -65,6 +65,19 @@ export default function CategoryScreen() {
     fetchCustomCategories()
   }
 
+  const renderCategory: ListRenderItem<Category> = ({ item }) => (
+    <View style={styles.catRow}>
+      <CategoryBadge category={item} size="large" />
+      {item.isCustom && (
+        <AppButton
+          title="Verwijder"
+          onPress={() => removeCategory(item.id)}
+          variant="secondary"
+        />
+      )}
+    </View>
+  )
+
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" /></View>
   }
@@ -101,18 +114,7 @@ export default function CategoryScreen() {
             <AppText variant="label" style={styles.section}>Alle categorieën</AppText>
           </View>
         }
-        renderItem={({ item }) => (
-          <View style={styles.catRow}>
-            <CategoryBadge category={item} size="large" />
-            {item.isCustom && (
-              <AppButton
-                title="Verwijder"
-                onPress={() => removeCategory(item.id)}
-                variant="secondary"
-              />
-            )}
-          </View>
-        )}
+        renderItem={renderCategory}
       />
     </SafeAreaView>
   )
