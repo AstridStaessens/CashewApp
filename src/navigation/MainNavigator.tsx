@@ -1,6 +1,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MainTabParamList, ExpensesStackParamList, ProfileStackParamList} from '../types';
+import { Ionicons } from '@expo/vector-icons';
 import DashboardScreen from '../screens/DashboardScreen';
 import ExpensesScreen from '../screens/ExpensesScreen';
 import AddExpenseScreen from '../screens/AddExpenseScreen';
@@ -35,11 +36,41 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 
 export default function MainNavigator() {
     return (
-        <Tab.Navigator>
-            <Tab.Screen name="Dashboard" component={DashboardScreen} options={{title: 'Dashboard'}} />
-            <Tab.Screen name="Expenses" component={ExpensesStackNavigator} options={{headerShown: false, title: 'Uitgaven'}} />
-            <Tab.Screen name="AddExpense" component={AddExpenseScreen} options={{title: 'Uitgave toevoegen'}} />
-            <Tab.Screen name="Profile" component={ProfileStackNavigator} options={{headerShown: false, title: 'Profiel'}} />
+        <Tab.Navigator screenOptions={{ tabBarActiveTintColor: '#6c63ff' }}>
+            <Tab.Screen
+                name="Dashboard"
+                component={DashboardScreen}
+                options={{
+                    title: 'Dashboard',
+                    tabBarIcon: ({ color, size }) => <Ionicons name="pie-chart-outline" size={size} color={color} />,
+                }}
+            />
+            <Tab.Screen
+                name="Expenses"
+                component={ExpensesStackNavigator}
+                options={{
+                    headerShown: false,
+                    title: 'Uitgaven',
+                    tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" size={size} color={color} />,
+                }}
+            />
+            <Tab.Screen
+                name="AddExpense"
+                component={AddExpenseScreen}
+                options={{
+                    title: 'Toevoegen',
+                    tabBarIcon: ({ color, size }) => <Ionicons name="add-circle-outline" size={size} color={color} />,
+                }}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={ProfileStackNavigator}
+                options={{
+                    headerShown: false,
+                    title: 'Profiel',
+                    tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+                }}
+            />
         </Tab.Navigator>
     )
 }

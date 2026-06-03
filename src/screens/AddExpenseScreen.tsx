@@ -3,7 +3,9 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
+import { addDoc, collection, Timestamp } from 'firebase/firestore'
 import { useState } from 'react'
+import { auth, db } from '../../firebase'
 import AppText from '../components/AppText'
 import AppButton from '../components/AppButton'
 import CategoryBadge from '../components/CategoryBadge'
@@ -27,16 +29,30 @@ export default function AddExpenseScreen() {
   const formik = useFormik({
     initialValues: { amount: '', category: '', description: '' },
     validationSchema: schema,
-    onSubmit: (values, { resetForm }) => {
-      Alert.alert(
-        'Uitgave opgeslagen!',
-        `€ ${values.amount} - ${values.category}`,
-        [{ text: 'OK', onPress: () => {
-          resetForm()
-          setPhotoUri('')
-          setLocation('')
-        }}]
-      )
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      try {
+        const uid = auth.currentUser?.uid
+        if (!uid) return
+
+        await addDoc(collection(db, 'users', uid, 'expenses'), {
+          amount: parseFloat(values.amount),
+          category: values.category,
+          description: values.description,
+          date: Timestamp.fromDate(new Date()),
+          location,
+          receiptPhotoUri: photoUri,
+          createdAt: Timestamp.fromDate(new Date()),
+        })
+
+        resetForm()
+        setPhotoUri('')
+        setLocation('')
+        Alert.alert('Uitgave opgeslagen!')
+      } catch {
+        Alert.alert('Er ging iets mis. Probeer opnieuw.')
+      } finally {
+        setSubmitting(false)
+      }
     },
   })
 
