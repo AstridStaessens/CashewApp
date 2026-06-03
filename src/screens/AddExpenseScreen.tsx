@@ -51,8 +51,8 @@ export default function AddExpenseScreen() {
 
         resetForm()
         setPhotoUri('')
-        setLocation('')
         Alert.alert('Uitgave opgeslagen!')
+        getLocation()
       } catch {
         Alert.alert('Er ging iets mis. Probeer opnieuw.')
       } finally {
